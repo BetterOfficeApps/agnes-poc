@@ -1,0 +1,124 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      # In addition to adding a new environment here, also add to aws_accounts.json.
+      # Uncomment "main" when you've got prd1 and prd2 workspaces set up, and delete this line.
+      -  # main # Note that "main" -> "prd1" + "prd2" is a special case.
+      - xandev
+
+jobs:
+  determine-environments:
+    name: Determine Environment(s)
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract branch name
+        id: extract-branch
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+
+      - name: Set environment matrix
+        id: set-matrix
+        # If branch is "main", then run for "prd1" and "prd2". Otherwise, run for just the branch name.
+        run: |
+          if [[ "${{ steps.extract-branch.outputs.branch }}" == "main" ]]
+          then
+            echo "::set-output name=matrix::{\"environment\":[\"prd1\", \"prd2\"]}"
+          else
+            echo "::set-output name=matrix::{\"environment\":[\"${{ steps.extract-branch.outputs.branch }}\"]}"
+          fi
+
+  deploy-infrastructure:
+    name: Deploy Infrastructure
+    needs: determine-environments
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.determine-environments.outputs.matrix)}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set Terraform version
+        id: terraform-version
+        run: echo "::set-output name=version::$(cat .terraform-version)"
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TERRAFORM_API_TOKEN }}
+          terraform_version: ${{ steps.terraform-version.outputs.version }}
+
+      - name: Terraform Init
+        env:
+          TF_WORKSPACE: ${{ matrix.environment }}-ca-central-1
+        working-directory: tf
+        run: terraform init
+
+      - name: Terraform Apply
+        env:
+          TF_WORKSPACE: ${{ matrix.environment }}-ca-central-1
+        working-directory: tf
+        run: terraform apply -auto-approve
+
+  deploy-application:
+    name: Deploy Application
+    needs: [determine-environments, deploy-infrastructure]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.determine-environments.outputs.matrix)}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Determine GitHub secrets to use
+        run: |
+          export AWS_ACCOUNT=$(jq -r .${{ matrix.environment }} .github/workflows/aws_accounts.json)
+          echo "GITHUB_SECRET_AWS_KEY_ID=AWS_ACCESS_KEY_ID_${AWS_ACCOUNT}" >> $GITHUB_ENV
+          echo "GITHUB_SECRET_AWS_ACCESS_KEY=AWS_SECRET_ACCESS_KEY_${AWS_ACCOUNT}" >> $GITHUB_ENV
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets[env.GITHUB_SECRET_AWS_KEY_ID] }}
+          aws-secret-access-key: ${{ secrets[env.GITHUB_SECRET_AWS_ACCESS_KEY] }}
+          aws-region: ca-central-1
+
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Generate Docker tag
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: hello-world-${{ matrix.environment }}/hello-world
+        id: docker-tag
+        run: |
+          IMAGE_TAG=$(git rev-parse --short HEAD)
+          echo "::set-output name=tag::${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}"
+
+      - name: "Build Lambda function: hello-world"
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+          context: lambda/hello_world
+          push: true
+          tags: ${{ steps.docker-tag.outputs.tag }}
+
+      - name: "Deploy Lambda function: hello-world"
+        run: aws lambda update-function-code --function-name "hello-world-${{ matrix.environment }}-hello-world" --image-uri ${{ steps.docker-tag.outputs.tag }}

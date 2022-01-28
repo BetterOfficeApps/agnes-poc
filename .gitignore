@@ -1,0 +1,10 @@
+.DS_Store
+*_override.tf
+*_override.tf.json
+*.tfstate
+*.tfstate.*
+**/.build
+**/.terraform
+**/node_modules/
+override.tf
+override.tf.json
