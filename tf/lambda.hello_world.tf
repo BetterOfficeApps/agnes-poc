@@ -1,5 +1,5 @@
 resource "aws_lambda_function" "hello_world" {
-  function_name = "${var.project}-${var.environment}-hello-world"
+  function_name = "agnes-test-${var.environment}"
   image_uri     = local.placeholder_uri # Do not change: overwritten by application deployment.
   memory_size   = 256
   package_type  = "Image"
@@ -23,7 +23,7 @@ resource "aws_lambda_function" "hello_world" {
 
   tags = {
     env     = var.environment              # Used by Datadog.
-    service = "${var.project}-hello-world" # Used by Datadog.
+    service = "agnes-test" # Used by Datadog.
   }
 }
 
