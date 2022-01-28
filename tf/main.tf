@@ -4,7 +4,7 @@ terraform {
     organization = "lendesk"
 
     workspaces {
-      prefix = "hello-world-"
+      prefix = "agnes-poc-"
     }
   }
 }

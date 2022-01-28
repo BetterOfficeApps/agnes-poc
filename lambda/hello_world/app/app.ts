@@ -13,10 +13,11 @@ export const handler = Sentry.AWSLambda.wrapHandler(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     // const file = await download("my-file.txt");
-    console.log(world());
+    let result = world();
+    console.log(result);
     return {
       statusCode: 200,
-      body: "World has been helloed.",
+      body: `${result}`,
     };
   }
 );
