@@ -27,6 +27,11 @@ resource "aws_lambda_function" "hello_world" {
   }
 }
 
+resource "aws_lambda_event_source_mapping" "sqs_event_source" {
+  event_source_arn  = aws_sqs_queue.event_queue.arn
+  function_name     = aws_lambda_function.hello_world.arn
+}
+
 resource "aws_lambda_function_event_invoke_config" "hello_world" {
   function_name          = aws_lambda_function.hello_world.arn
   maximum_retry_attempts = 0
