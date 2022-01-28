@@ -71,7 +71,8 @@ resource "aws_iam_policy" "lambda_use_sqs" {
         {
           "Action" = [
             "sqs:ReceiveMessage",
-            "sqs:DeleteMessage"
+            "sqs:DeleteMessage",
+            "sqs:GetQueueAttributes"
           ],
           "Effect" = "Allow",
           "Resource" = [
