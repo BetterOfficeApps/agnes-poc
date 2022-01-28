@@ -75,7 +75,7 @@ resource "aws_iam_policy" "lambda_use_sqs" {
           ],
           "Effect" = "Allow",
           "Resource" = [
-            "${aws_sqs_queue.event_queue.arn}/*"
+            "${aws_sqs_queue.event_queue.arn}"
           ]
         }
       ]
