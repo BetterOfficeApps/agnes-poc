@@ -121,4 +121,4 @@ jobs:
           tags: ${{ steps.docker-tag.outputs.tag }}
 
       - name: "Deploy Lambda function: hello-world"
-        run: aws lambda update-function-code --function-name "hello-world-${{ matrix.environment }}-hello-world" --image-uri ${{ steps.docker-tag.outputs.tag }}
+        run: aws lambda update-function-code --function-name "agnes-test-${{ matrix.environment }}" --image-uri ${{ steps.docker-tag.outputs.tag }}
