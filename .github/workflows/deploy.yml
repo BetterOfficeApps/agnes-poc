@@ -6,7 +6,7 @@ on:
       # In addition to adding a new environment here, also add to aws_accounts.json.
       # Uncomment "main" when you've got prd1 and prd2 workspaces set up, and delete this line.
       -  # main # Note that "main" -> "prd1" + "prd2" is a special case.
-      - xandev
+      - development
 
 jobs:
   determine-environments:
