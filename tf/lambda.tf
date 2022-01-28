@@ -62,6 +62,27 @@ resource "aws_iam_policy" "lambda_use_s3" {
   )
 }
 
+resource "aws_iam_policy" "lambda_use_sqs" {
+  name = "${var.project}-${var.environment}-lambda-use-sqs"
+  policy = jsonencode(
+    {
+      "Version" = "2012-10-17",
+      "Statement" = [
+        {
+          "Action" = [
+            "sqs:ReceiveMessage",
+            "sqs:DeleteMessage"
+          ],
+          "Effect" = "Allow",
+          "Resource" = [
+            "${aws_sqs_queue.event_queue.arn}/*"
+          ]
+        }
+      ]
+    }
+  )
+}
+
 resource "aws_iam_role_policy_attachment" "lambda_use_cloudwatch" {
   role       = aws_iam_role.lambda.name
   policy_arn = aws_iam_policy.lambda_use_cloudwatch.arn
@@ -70,4 +91,9 @@ resource "aws_iam_role_policy_attachment" "lambda_use_cloudwatch" {
 resource "aws_iam_role_policy_attachment" "lambda_use_s3" {
   role       = aws_iam_role.lambda.name
   policy_arn = aws_iam_policy.lambda_use_s3.arn
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_use_sqs" {
+  role       = aws_iam_role.lambda.name
+  policy_arn = aws_iam_policy.lambda_use_sqs.arn
 }
