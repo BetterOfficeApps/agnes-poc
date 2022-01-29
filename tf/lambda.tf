@@ -3,10 +3,10 @@ locals {
 }
 
 resource "aws_iam_role" "lambda" {
-  name = "${var.project}-${var.environment}-lambda"
+  name = "agnes-${var.project}-${var.environment}-lambda"
   assume_role_policy = jsonencode(
     {
-      "Version" = "2012-10-17",
+      "Version" = "2022-01-28",
       "Statement" = [
         {
           "Action" = "sts:AssumeRole",
@@ -21,10 +21,10 @@ resource "aws_iam_role" "lambda" {
 }
 
 resource "aws_iam_policy" "lambda_use_cloudwatch" {
-  name = "${var.project}-${var.environment}-lambda-use-cloudwatch"
+  name = "agnes-${var.project}-${var.environment}-lambda-use-cloudwatch"
   policy = jsonencode(
     {
-      "Version" = "2012-10-17",
+      "Version" = "2022-01-28",
       "Statement" = [
         {
           "Action" = [
@@ -43,10 +43,10 @@ resource "aws_iam_policy" "lambda_use_cloudwatch" {
 }
 
 resource "aws_iam_policy" "lambda_use_s3" {
-  name = "${var.project}-${var.environment}-lambda-use-s3"
+  name = "agnes-${var.project}-${var.environment}-lambda-use-s3"
   policy = jsonencode(
     {
-      "Version" = "2012-10-17",
+      "Version" = "2022-01-28",
       "Statement" = [
         {
           "Action" = [
@@ -63,16 +63,37 @@ resource "aws_iam_policy" "lambda_use_s3" {
 }
 
 resource "aws_iam_policy" "lambda_use_sqs" {
-  name = "${var.project}-${var.environment}-lambda-use-sqs"
+  name = "agnes-${var.project}-${var.environment}-lambda-use-sqs"
   policy = jsonencode(
     {
-      "Version" = "2012-10-17",
+      "Version" = "2022-01-28",
       "Statement" = [
         {
           "Action" = [
             "sqs:ReceiveMessage",
             "sqs:DeleteMessage",
             "sqs:GetQueueAttributes"
+          ],
+          "Effect" = "Allow",
+          "Resource" = [
+            "${aws_sqs_queue.event_queue.arn}"
+          ]
+        }
+      ]
+    }
+  )
+}
+
+resource "aws_iam_policy" "lambda_use_sns" {
+  name = "agnes-${var.project}-${var.environment}-lambda-use-sns"
+  policy = jsonencode(
+    {
+      "Version" = "2022-01-28",
+      "Statement" = [
+        {
+          "Action" = [
+            "sns:GetTopicAttributes",
+            "sns:List*"
           ],
           "Effect" = "Allow",
           "Resource" = [
@@ -97,6 +118,11 @@ resource "aws_iam_role_policy_attachment" "lambda_use_s3" {
 resource "aws_iam_role_policy_attachment" "lambda_use_sqs" {
   role       = aws_iam_role.lambda.name
   policy_arn = aws_iam_policy.lambda_use_sqs.arn
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_use_sns" {
+  role       = aws_iam_role.lambda.name
+  policy_arn = aws_iam_policy.lambda_use_sns.arn
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_use_xray" {
