@@ -46,5 +46,5 @@ resource "aws_iam_policy" "sns_default_policy" {
 
 resource "aws_iam_role_policy_attachment" "sns_has_default" {
   role       = aws_iam_role.sns.name
-  policy_arn = aws_iam_policy.sns_default_policy
+  policy_arn = aws_iam_policy.sns_default_policy.arn
 }
