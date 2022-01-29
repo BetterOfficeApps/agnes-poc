@@ -28,11 +28,14 @@ resource "aws_iam_policy" "sns_default_policy" {
       "Statement" = [
         {
           "Action" = [
-            "logs:CreateLogGroup",
-            "logs:CreateLogStream",
-            "logs:PutLogEvents",
-            "logs:PutMetricFilter",
-            "logs:PutRetentionPolicy"
+            "SNS:Subscribe",
+            "SNS:SetTopicAttributes",
+            "SNS:RemovePermission",
+            "SNS:Publish",
+            "SNS:ListSubscriptionsByTopic",
+            "SNS:GetTopicAttributes",
+            "SNS:DeleteTopic",
+            "SNS:AddPermission",
           ],
           "Effect" = "Allow",
           "Resource" = [
@@ -47,4 +50,10 @@ resource "aws_iam_policy" "sns_default_policy" {
 resource "aws_iam_role_policy_attachment" "sns_has_default" {
   role       = aws_iam_role.sns.name
   policy_arn = aws_iam_policy.sns_default_policy.arn
+}
+
+resource "aws_sns_topic_subscription" "lambda_say_hello" {
+  topic_arn = aws_sns_topic.say_hello.arn
+  protocol  = "lambda"
+  endpoint  = aws_lambda_function.hello_world.arn
 }
