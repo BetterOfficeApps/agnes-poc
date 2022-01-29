@@ -6,7 +6,7 @@ resource "aws_iam_role" "sns" {
   name = "agnes-${var.project}-${var.environment}-sns"
   assume_role_policy = jsonencode(
     {
-      "Version" = "2022-01-28",
+      "Version" = "2012-10-17",
       "Statement" = [
         {
           "Action" = "sts:AssumeRole",
@@ -24,7 +24,7 @@ resource "aws_iam_policy" "sns_default_policy" {
   name = "agnes-${var.project}-${var.environment}-sns-default"
   policy = jsonencode(
     {
-      "Version" = "2022-01-28",
+      "Version" = "2012-10-17",
       "Statement" = [
         {
           "Action" = [

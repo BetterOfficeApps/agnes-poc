@@ -6,7 +6,7 @@ resource "aws_iam_role" "lambda" {
   name = "agnes-${var.project}-${var.environment}-lambda"
   assume_role_policy = jsonencode(
     {
-      "Version" = "2022-01-28",
+      "Version" = "2012-10-17",
       "Statement" = [
         {
           "Action" = "sts:AssumeRole",
@@ -24,7 +24,7 @@ resource "aws_iam_policy" "lambda_use_cloudwatch" {
   name = "agnes-${var.project}-${var.environment}-lambda-use-cloudwatch"
   policy = jsonencode(
     {
-      "Version" = "2022-01-28",
+      "Version" = "2012-10-17",
       "Statement" = [
         {
           "Action" = [
@@ -46,7 +46,7 @@ resource "aws_iam_policy" "lambda_use_s3" {
   name = "agnes-${var.project}-${var.environment}-lambda-use-s3"
   policy = jsonencode(
     {
-      "Version" = "2022-01-28",
+      "Version" = "2012-10-17",
       "Statement" = [
         {
           "Action" = [
@@ -66,7 +66,7 @@ resource "aws_iam_policy" "lambda_use_sqs" {
   name = "agnes-${var.project}-${var.environment}-lambda-use-sqs"
   policy = jsonencode(
     {
-      "Version" = "2022-01-28",
+      "Version" = "2012-10-17",
       "Statement" = [
         {
           "Action" = [
@@ -88,7 +88,7 @@ resource "aws_iam_policy" "lambda_use_sns" {
   name = "agnes-${var.project}-${var.environment}-lambda-use-sns"
   policy = jsonencode(
     {
-      "Version" = "2022-01-28",
+      "Version" = "2012-10-17",
       "Statement" = [
         {
           "Action" = [
@@ -97,7 +97,7 @@ resource "aws_iam_policy" "lambda_use_sns" {
           ],
           "Effect" = "Allow",
           "Resource" = [
-            "${aws_sqs_queue.event_queue.arn}"
+            "${aws_sns_topic.say_hello.arn}"
           ]
         }
       ]
