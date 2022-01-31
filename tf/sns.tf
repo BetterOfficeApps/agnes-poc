@@ -28,14 +28,14 @@ resource "aws_iam_policy" "sns_default_policy" {
       "Statement" = [
         {
           "Action" = [
-            "SNS:Subscribe",
-            "SNS:SetTopicAttributes",
-            "SNS:RemovePermission",
-            "SNS:Publish",
-            "SNS:ListSubscriptionsByTopic",
-            "SNS:GetTopicAttributes",
-            "SNS:DeleteTopic",
-            "SNS:AddPermission",
+            "sns:Subscribe",
+            "sns:SetTopicAttributes",
+            "sns:RemovePermission",
+            "sns:Publish",
+            "sns:ListSubscriptionsByTopic",
+            "sns:GetTopicAttributes",
+            "sns:DeleteTopic",
+            "sns:AddPermission",
           ],
           "Effect" = "Allow",
           "Resource" = [
