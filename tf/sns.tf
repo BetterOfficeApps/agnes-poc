@@ -36,6 +36,7 @@ resource "aws_iam_policy" "sns_default_policy" {
             "sns:GetTopicAttributes",
             "sns:DeleteTopic",
             "sns:AddPermission",
+            "lambda:InvokeFunction",
           ],
           "Effect" = "Allow",
           "Resource" = [
