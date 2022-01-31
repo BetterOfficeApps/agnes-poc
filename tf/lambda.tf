@@ -94,9 +94,33 @@ resource "aws_iam_policy" "lambda_use_sns" {
           "Action" = [
             "sns:GetTopicAttributes",
             "sns:List*",
-            "lambda:InvokeFunction"
           ],
           "Effect" = "Allow",
+          "Resource" = [
+            "${aws_sns_topic.say_hello.arn}"
+          ]
+        }
+      ]
+    }
+  )
+}
+
+resource "aws_iam_policy" "lambda_allow_sns_invoke" {
+  name = "agnes-${var.project}-${var.environment}-lambda-allow-sns-invoke"
+  policy = jsonencode(
+    {
+      "Version" = "2012-10-17",
+      "Statement" = [
+        {
+          "Action" = [
+            "lambda:InvokeFunction",
+          ],
+          "Effect" = "Allow",
+          "Principal": {
+            "Service": [
+              "sns.amazonaws.com"
+            ]
+          }
           "Resource" = [
             "${aws_sns_topic.say_hello.arn}"
           ]
@@ -124,6 +148,11 @@ resource "aws_iam_role_policy_attachment" "lambda_use_sqs" {
 resource "aws_iam_role_policy_attachment" "lambda_use_sns" {
   role       = aws_iam_role.lambda.name
   policy_arn = aws_iam_policy.lambda_use_sns.arn
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_allow_sns_invoke" {
+  role       = aws_iam_role.lambda.name
+  policy_arn = aws_iam_policy.lambda_allow_sns_invoke.arn
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_use_xray" {
