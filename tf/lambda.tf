@@ -93,7 +93,8 @@ resource "aws_iam_policy" "lambda_use_sns" {
         {
           "Action" = [
             "sns:GetTopicAttributes",
-            "sns:List*"
+            "sns:List*",
+            "lambda:InvokeFunction"
           ],
           "Effect" = "Allow",
           "Resource" = [
