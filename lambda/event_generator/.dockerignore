@@ -1,0 +1,6 @@
+**/*.test.ts
+app/.build
+app/.eslintignore
+app/.eslintrc
+app/jest.config.js
+app/node_modules
