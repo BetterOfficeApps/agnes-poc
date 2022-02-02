@@ -17,7 +17,8 @@ resource "aws_cloudwatch_event_rule" "invoke_lambda" {
 }
 
 resource "aws_cloudwatch_event_target" "lambda" {
-  rule      = aws_cloudwatch_event_rule.invoke_lambda.name
-  target_id = "InvokeHelloWorldLambda"
-  arn       = aws_lambda_function.hello_world.arn
+  rule           = aws_cloudwatch_event_rule.invoke_lambda.name
+  event_bus_name = aws_cloudwatch_event_bus.messenger.name
+  target_id      = "InvokeHelloWorldLambda"
+  arn            = aws_lambda_function.hello_world.arn
 }
