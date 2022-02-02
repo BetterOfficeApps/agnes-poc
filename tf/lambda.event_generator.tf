@@ -1,5 +1,5 @@
 resource "aws_lambda_function" "event_generator" {
-  function_name = "agnes-test-event-generator${var.environment}"
+  function_name = "agnes-test-event-generator-${var.environment}"
   image_uri     = local.placeholder_uri # Do not change: overwritten by application deployment.
   memory_size   = 256
   package_type  = "Image"

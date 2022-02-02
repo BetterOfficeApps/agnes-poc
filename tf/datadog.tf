@@ -11,6 +11,7 @@ module "datadog" {
   namespace                      = var.project
 
   cloudwatch_log_groups = [
-    aws_cloudwatch_log_group.hello_world.name
+    aws_cloudwatch_log_group.hello_world.name,
+    aws_cloudwatch_log_group.event_generator.name
   ]
 }
