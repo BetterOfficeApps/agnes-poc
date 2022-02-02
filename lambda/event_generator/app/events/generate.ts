@@ -23,6 +23,7 @@ export function generate(): any {
       return data; // For unit tests.
     } catch (err) {
       console.log("Error", err);
+      return "error";
     }
   };
 }

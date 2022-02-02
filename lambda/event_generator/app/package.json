@@ -31,7 +31,10 @@
   },
   "dependencies": {
     "@aws-sdk/client-eventbridge": "^3.49.0",
-    "@sentry/serverless": "6.17.3"
+    "@sentry/integrations": "6.4.0",
+    "@sentry/serverless": "6.4.0",
+    "datadog-lambda-js": "3.53.0",
+    "dd-trace": "0.33.2"
   },
   "husky": {
     "hooks": {
