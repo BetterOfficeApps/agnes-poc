@@ -33,7 +33,8 @@ resource "aws_iam_policy" "lambda_use_cloudwatch" {
             "logs:PutLogEvents"
           ],
           "Resource" = [
-            "${aws_cloudwatch_log_group.hello_world.arn}:*"
+            "${aws_cloudwatch_log_group.hello_world.arn}:*",
+            "${aws_cloudwatch_log_group.event_generator.arn}:*"
           ],
           "Effect" = "Allow"
         }
