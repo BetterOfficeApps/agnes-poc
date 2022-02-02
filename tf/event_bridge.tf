@@ -5,7 +5,7 @@ resource "aws_cloudwatch_event_bus" "messenger" {
 resource "aws_cloudwatch_event_rule" "invoke_lambda" {
   name        = "invoke-lambda"
   description = "Invoke Lambda when receiving event"
-  event_bus_name = "agnes-test-messenger"
+  event_bus_name = aws_cloudwatch_event_bus.messenger.name
 
   event_pattern = <<EOF
   {
