@@ -114,6 +114,14 @@ resource "aws_lambda_permission" "allow_sns" {
   source_arn    = aws_sns_topic.say_hello.arn
 }
 
+resource "aws_lambda_permission" "allow_event_bridge" {
+  statement_id  = "AllowExecutionFromEventBridge"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.hello_world.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.invoke_lambda.arn
+}
+
 resource "aws_iam_role_policy_attachment" "lambda_use_cloudwatch" {
   role       = aws_iam_role.lambda.name
   policy_arn = aws_iam_policy.lambda_use_cloudwatch.arn
