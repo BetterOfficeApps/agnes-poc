@@ -6,7 +6,8 @@ const params = {
     {
       Detail: '{ "from": "lambda2", "to": "eventBridge" }',
       DetailType: "appRequestSubmitted",
-      Source: "com.company.app",
+      EventBusName: 'agnes-test-messenger',
+      Source: "agnes-event-generator-lambda",
     },
   ],
 };
