@@ -11,7 +11,7 @@ Sentry.setTag("env_name", process.env.ENVIRONMENT);
 export const handler = Sentry.AWSLambda.wrapHandler(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    const result = generate();
+    const result = await generate();
     console.log(result);
     return {
       statusCode: 200,
