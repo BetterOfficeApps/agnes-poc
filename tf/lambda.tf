@@ -106,6 +106,26 @@ resource "aws_iam_policy" "lambda_use_sns" {
   )
 }
 
+resource "aws_iam_policy" "lambda_use_eb" {
+  name = "agnes-${var.project}-${var.environment}-lambda-use-eb"
+  policy = jsonencode(
+    {
+      "Version" = "2012-10-17",
+      "Statement" = [
+        {
+          "Action" = [
+            "events:PutEvents"
+          ],
+          "Effect" = "Allow",
+          "Resource" = [
+            "${aws_cloudwatch_event_bus.messenger.arn}"
+          ]
+        }
+      ]
+    }
+  )
+}
+
 resource "aws_lambda_permission" "allow_sns" {
   statement_id  = "AllowExecutionFromSNS"
   action        = "lambda:InvokeFunction"
@@ -148,6 +168,11 @@ resource "aws_iam_role_policy_attachment" "lambda_use_sqs" {
 resource "aws_iam_role_policy_attachment" "lambda_use_sns" {
   role       = aws_iam_role.lambda.name
   policy_arn = aws_iam_policy.lambda_use_sns.arn
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_use_eb" {
+  role       = aws_iam_role.lambda.name
+  policy_arn = aws_iam_policy.lambda_use_eb.arn
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_use_xray" {
