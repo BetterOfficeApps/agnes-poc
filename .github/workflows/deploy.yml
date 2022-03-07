@@ -38,7 +38,7 @@ jobs:
       matrix: ${{fromJson(needs.determine-environments.outputs.matrix)}}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set Terraform version
         id: terraform-version
@@ -70,7 +70,7 @@ jobs:
       matrix: ${{fromJson(needs.determine-environments.outputs.matrix)}}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Determine GitHub secrets to use
         run: |
