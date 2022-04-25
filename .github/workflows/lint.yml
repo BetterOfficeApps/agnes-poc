@@ -70,7 +70,7 @@ jobs:
         run: echo "::set-output name=version::$(cat .terraform-version)"
 
       - name: Install Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{ steps.terraform-version.outputs.version }}
 
